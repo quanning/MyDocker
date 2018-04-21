@@ -1,10 +1,11 @@
 #!/usr/bin/python
-# EASY-INSTALL-ENTRY-SCRIPT: 'supervisor==3.1.4','console_scripts','supervisord'
-__requires__ = 'supervisor==3.1.4'
-import sys
-import json
+from supervisor.supervisord import main
+
+# __doc__ required to make supervisord -h work
+from supervisor.supervisord import __doc__
+
 import os
-from pkg_resources import load_entry_point
+import json
 
 def save(token, secret):
     dd = {
@@ -21,8 +22,6 @@ def save(token, secret):
     except:
         return 201
 
-if __name__ == '__main__':    
+if __name__ == '__main__':
     save(os.environ["TOKEN"], os.environ["SECRET"])
-    sys.exit(
-        load_entry_point('supervisor==3.1.4', 'console_scripts', 'supervisord')()
-    )
+    main()
