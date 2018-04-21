@@ -7,10 +7,18 @@ from supervisor.supervisord import __doc__
 import os
 import json
 
-def save(token, secret):
+def save_env():
     dd = {
-        "token" : token,
-        "secret" : secret,
+        "username": os.environ["USERNAME"],
+        "password": os.environ["PASSWORD"],
+        "appid": os.environ["APPID"],
+        "smtp_host" : os.environ["SMTP_HOST"],
+        "smtp_port" : os.environ["SMTP_PORT"],
+        "ssl_port" : os.environ["SSL_PORT"],
+        "mail_username" : os.environ["MAIL_USERNAME"],
+        "mail_password" : os.environ["MAIL_PASSWORD"],
+        "mail_to" : os.environ["MAIL_TO"],
+        "server_ip" : "127.0.0.1:14587"
     }
     with open('/root/script/config.json', 'r') as f:
         config = json.load(f)
@@ -18,10 +26,12 @@ def save(token, secret):
     try:
         with open('/root/script/config.json', 'w') as f:
             json.dump(config, f, indent=4, sort_keys=True)
+        os.system("echo \"root:%s\" | chpasswd" % os.environ["ROOT_PWD"])
+        os.system("python /root/script/update.py >> /root/update.log 2>&1 &")
         return 200
     except:
         return 201
 
 if __name__ == '__main__':
-    save(os.environ["TOKEN"], os.environ["SECRET"])
+    save_env()
     main()
