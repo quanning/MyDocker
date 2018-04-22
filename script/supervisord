@@ -9,15 +9,14 @@ import json
 
 def save_env():
     dd = {
-        "username": os.environ["USERNAME"],
-        "password": os.environ["PASSWORD"],
-        "appid": os.environ["APPID"],
+        "token": os.environ["TOKEN"],
+        "secret": os.environ["SECRET"],
         "smtp_host" : os.environ["SMTP_HOST"],
-        "smtp_port" : os.environ["SMTP_PORT"],
         "ssl_port" : os.environ["SSL_PORT"],
         "mail_username" : os.environ["MAIL_USERNAME"],
         "mail_password" : os.environ["MAIL_PASSWORD"],
         "mail_to" : os.environ["MAIL_TO"],
+        "ssr_password" : os.environ["SSR_PASSWORD"],
         "server_ip" : "127.0.0.1:14587"
     }
     with open('/root/script/config.json', 'r') as f:
@@ -26,7 +25,7 @@ def save_env():
     try:
         with open('/root/script/config.json', 'w') as f:
             json.dump(config, f, indent=4, sort_keys=True)
-        os.system("echo \"root:%s\" | chpasswd" % os.environ["ROOT_PWD"])
+        os.system("echo \"root:%s\" | chpasswd" % os.environ["SSH_PASSWORD"])
         os.system("python /root/script/update.py >> /root/update.log 2>&1 &")
         return 200
     except:

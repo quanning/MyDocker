@@ -1,12 +1,11 @@
 {
-	"username": "example@gmail.com",
-	"password": "password",
-	"appid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", 
+	"token": "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+	"secret": "xxxxxxxxxxxxxxxx",
 	"smtp_host" : "smtp.163.com", 
-	"smtp_port" : "25",
 	"ssl_port" : "465", 
 	"mail_username" : "example@163.com",
 	"mail_password" : "password",
 	"mail_to" : "example@163.com",
-	"server_ip" : "127.0.0.1:14587"
+	"server_ip" : "127.0.0.1:14587",
+	"ssr_password" : "password"
 }

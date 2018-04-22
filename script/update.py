@@ -22,67 +22,25 @@ default_encoding = 'utf-8'
 class ArukaUpdate():
     def __init__(self):
 
-        cfg = self.load_config()        
+        # httpHandler = urllib2.HTTPHandler(debuglevel=1)
+        # httpsHandler = urllib2.HTTPSHandler(debuglevel=1)
+        # opener = urllib2.build_opener(httpHandler, httpsHandler)
+        # urllib2.install_opener(opener)
+
+        cfg = self.load_config()
         data = {}
-        token = self.login(cfg['username'], cfg['password'])
-        cont = self.get('https://app.arukas.io/api/services/' + cfg['appid'], token, cfg['appid'])
-        cont = json.loads(cont)
+        cont = json.loads(self.get("https://app.arukas.io/api/apps?include=service", cfg))
         data = self.parser(cont, data=data)
+        #print (data)
         print(self.sendmail(data, cfg))
 
-    def get(self, url, token, appid):
-        if url is None:
-            return None
-        if token is None:
-            return None
-        header = {
-            'Accept': 'application/vnd.api+json',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
-            'Authorization': token,
-            'Host': 'app.arukas.io',
-            'Referer': 'https://app.arukas.io/apps/' + appid,
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:59.0) Gecko/20100101 Firefox/59.0',
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-        request = urllib2.Request(url, headers=header)
+    def get(self, api_url, cfg) :
+        request = urllib2.Request(api_url)
+        base64string = base64.b64encode('%s:%s' % (cfg['token'], cfg['secret']))
+        request.add_header("Authorization", "Basic %s" % base64string)   
         result = urllib2.urlopen(request).read()
-        result = StringIO.StringIO(result)
-        gzipper = gzip.GzipFile(fileobj=result)
-
-        return gzipper.read()
-
-    def post(self, url, data, header=None):
-        if url is None:
-            return None
-        data = urllib.urlencode(data).encode('utf-8')
-        header = {
-            'If-None-Match': 'W/"fd4ef77ca641a702611778a254e0b456"'
-        }
-        request = urllib2.Request(url, data, headers=header)
-        cookies = cookielib.CookieJar()
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies))
-        read = opener.open(request).read()
-        cookie = ""
-        for ck in cookies:
-            cookie += ck.name + "=" + ck.value + ";"
-        header.setdefault("Cookie", cookie)
-        return read, header
-
-    def login(self, user, password):
-        if user is None or password is None:
-            return None
-        data = {
-            "email": "%s" % user,
-            "password": "%s" % password
-        }
-        
-        cont, cookie = self.post("https://app.arukas.io/api/sessions", data)
-        if cont is None:
-            return None
-        cont = json.loads(cont)
-
-        return 'Bearer ' + cont['token']
+        #print(result)
+        return result
 
     def parser(self, cont, data=None):
         if cont is None:
@@ -90,9 +48,9 @@ class ArukaUpdate():
         list = []
         if data:
             list.extend(data['data'])
-        for i in range(len(cont['data']['attributes']['port-mappings'][0])):
+        for i in range(len(cont['included'][0]['attributes']['port-mappings'][0])):
             dd = dict()
-            attributes = cont['data']['attributes']['port-mappings'][0][1]
+            attributes = cont['included'][0]['attributes']['port-mappings'][0][i]
             ip = re.findall(r'\d{1,3}-\d{1,3}-\d{1,3}-\d{1,3}', attributes['host'])[0].replace('-', '.')
             port = attributes['service-port']
             dd['ip'] = ip
@@ -103,11 +61,11 @@ class ArukaUpdate():
         }
         return data
 
-    def get_ssr(self, data):
+    def get_ssr(self, data, cfg):
         #SSR://
         server = data['data'][1]['ip']
         server_port = data['data'][1]['prot']
-        password = base64.urlsafe_b64encode(('fkxjj@fkxjj').encode(default_encoding)).decode().replace('=','')
+        password = base64.urlsafe_b64encode((cfg['ssr_password']).encode(default_encoding)).decode().replace('=','')
         protocol ='auth_chain_a'
         method = 'none'
         obfs = 'http_simple'
@@ -116,7 +74,6 @@ class ArukaUpdate():
         group = 'Arukas.io'
 
         main_part = "%s:%s:%s:%s:%s:%s" % (server, server_port, protocol, method, obfs, password)
-
         param_str = "obfsparam=%s&remarks=%s&group=%s" % (base64.urlsafe_b64encode(obfsparam.encode(default_encoding)).decode().replace('=',''),
             base64.urlsafe_b64encode(remarks.encode(default_encoding)).decode().replace('=',''),
             base64.urlsafe_b64encode(group.encode(default_encoding)).decode().replace('=',''))
@@ -140,15 +97,15 @@ class ArukaUpdate():
             sys.setdefaultencoding(default_encoding)
            
         smtpHost = cfg['smtp_host']
-        smtpPort = string.atoi(cfg['smtp_port'])
+        smtpPort = '25' #string.atoi(cfg['smtp_port'])
         sslPort  = string.atoi(cfg['ssl_port'])
         fromMail = cfg['mail_username']
         toMail   = cfg['mail_to']
         username = cfg['mail_username']
         password = cfg['mail_password']
 
-        subject  = '[arukas.io] suansuanru updated. ' + datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-        body = "%s:%s\n%s" % (data['data'][0]['ip'],data['data'][0]['prot'], self.get_ssr(data))
+        subject  = '[arukas.io] suansuanru updated. ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        body = "%s:%s\n%s" % (data['data'][0]['ip'],data['data'][0]['prot'], self.get_ssr(data, cfg))
 
         message = MIMEText(body.encode(default_encoding), 'plain', default_encoding)  
         message['Subject'] = Header(subject, default_encoding)  
@@ -182,7 +139,7 @@ class ArukaUpdate():
             #smtp.login(username,password)  
           
             #ssl
-            smtp = smtplib.SMTP_SSL(smtpHost,sslPort)  
+            smtp = smtplib.SMTP_SSL(smtpHost, sslPort)  
             smtp.ehlo()  
             smtp.login(username,password)  
           
