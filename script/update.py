@@ -153,7 +153,7 @@ class ArukaUpdate():
 
     def load_config(self):
         data = {}
-        with open('config.json', 'r') as f:
+        with open('/root/script/config.json', 'r') as f:
             data = json.load(f)
         return data
 
