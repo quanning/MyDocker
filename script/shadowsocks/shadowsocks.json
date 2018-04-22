@@ -4,7 +4,7 @@
     "server_port":14587,
     "local_address":"127.0.0.1",
     "local_port":1080,
-    "password":"fkxjj@fkxjj",
+    "password":"password",
     "timeout":120,
     "method":"none",
     "protocol":"auth_chain_a",

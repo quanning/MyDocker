@@ -7,6 +7,19 @@ from supervisor.supervisord import __doc__
 import os
 import json
 
+def save_ssr():
+    ss = {}
+    with open('/root/script/shadowsocks/shadowsocks.json', 'r') as f:
+        config = json.load(f)
+    config = ss
+    config['ssr_password'] = os.environ["SSR_PASSWORD"]
+    try:
+        with open('/root/script/shadowsocks/shadowsocks.json', 'w') as f:
+            json.dump(config, f, indent=4, sort_keys=True)
+        return 200
+    except:
+        return 201
+
 def save_env():
     dd = {
         "token": os.environ["TOKEN"],
@@ -32,5 +45,6 @@ def save_env():
         return 201
 
 if __name__ == '__main__':
+    save_ssr()
     save_env()
     main()
