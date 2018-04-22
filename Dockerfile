@@ -3,7 +3,7 @@
 
 FROM ilemonrain/centos-sshd:latest
 
-MAINTAINER quanning@gmail.com
+MAINTAINER quanning quanning@gmail.com
 
 COPY ./script /root/script/
 
