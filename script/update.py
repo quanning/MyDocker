@@ -4,8 +4,6 @@ import urllib2
 import cookielib
 import re
 import json
-import gzip
-import StringIO
 import base64
 import string
 import sys
@@ -21,17 +19,14 @@ default_encoding = 'utf-8'
 
 class ArukaUpdate():
     def __init__(self):
-
-        # httpHandler = urllib2.HTTPHandler(debuglevel=1)
-        # httpsHandler = urllib2.HTTPSHandler(debuglevel=1)
-        # opener = urllib2.build_opener(httpHandler, httpsHandler)
-        # urllib2.install_opener(opener)
-
         cfg = self.load_config()
+        if cfg['server_ip'] != "127.0.0.1:14587" :
+            print ("noting...")
+            return 200
+
         data = {}
         cont = json.loads(self.get("https://app.arukas.io/api/apps?include=service", cfg))
         data = self.parser(cont, data=data)
-        #print (data)
         print(self.sendmail(data, cfg))
 
     def get(self, api_url, cfg) :
@@ -39,7 +34,6 @@ class ArukaUpdate():
         base64string = base64.b64encode('%s:%s' % (cfg['token'], cfg['secret']))
         request.add_header("Authorization", "Basic %s" % base64string)   
         result = urllib2.urlopen(request).read()
-        #print(result)
         return result
 
     def parser(self, cont, data=None):
@@ -83,15 +77,6 @@ class ArukaUpdate():
         return "ssr://" + base64.urlsafe_b64encode(sharessr.encode(default_encoding)).decode().replace('=','')
 
     def sendmail(self, data, cfg):
-        server_ip = "%s:%s" % (data['data'][0]['ip'], data['data'][0]['prot'])
-        #print ("%s vs %s" % (server_ip, cfg['server_ip']))
-        if server_ip == cfg['server_ip'] :
-            print ("noting...")
-            return 200
-
-        cfg['server_ip'] = server_ip
-        self.save_config(cfg)
-
         if sys.getdefaultencoding() != default_encoding:  
             reload(sys)  
             sys.setdefaultencoding(default_encoding)
@@ -145,6 +130,11 @@ class ArukaUpdate():
           
             smtp.sendmail(fromMail,toMail, message.as_string())  
             smtp.close()
+            
+            server_ip = "%s:%s" % (data['data'][0]['ip'], data['data'][0]['prot'])
+            cfg['server_ip'] = server_ip
+            self.save_config(cfg)
+
             return 200
 
         except Exception as e:  
