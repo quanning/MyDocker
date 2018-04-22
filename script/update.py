@@ -20,14 +20,11 @@ default_encoding = 'utf-8'
 class ArukaUpdate():
     def __init__(self):
         cfg = self.load_config()
-        # if cfg['server_ip'] != "127.0.0.1:14587" :
-        #     print ("noting...")
-        #     return 200
-
-        data = {}
-        cont = json.loads(self.get("https://app.arukas.io/api/apps?include=service", cfg))
-        data = self.parser(cont, data=data)
-        print(self.sendmail(data, cfg))
+        if cfg['server_ip'] == "127.0.0.1:14587" :
+            data = {}
+            cont = json.loads(self.get("https://app.arukas.io/api/apps?include=service", cfg))
+            data = self.parser(cont, data=data)
+            print(self.sendmail(data, cfg))
 
     def get(self, api_url, cfg) :
         request = urllib2.Request(api_url)
@@ -131,9 +128,9 @@ class ArukaUpdate():
             smtp.sendmail(fromMail,toMail, message.as_string())  
             smtp.close()
             
-            # server_ip = "%s:%s" % (data['data'][0]['ip'], data['data'][0]['prot'])
-            # cfg['server_ip'] = server_ip
-            # self.save_config(cfg)
+            server_ip = "%s:%s" % (data['data'][0]['ip'], data['data'][0]['prot'])
+            cfg['server_ip'] = server_ip
+            self.save_config(cfg)
 
             return 200
 
