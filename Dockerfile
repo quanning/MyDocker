@@ -1,7 +1,7 @@
 # use this image to run multiple service
 # add service in supervisord.conf
 
-FROM ilemonrain/centos-sshd:latest
+FROM ilemonrain/centos-sshd:6.9
 
 MAINTAINER dachuichui <quanning@gmail.com>
 
