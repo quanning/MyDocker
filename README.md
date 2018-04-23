@@ -1,6 +1,6 @@
 ## 简介
 -----------------------------
-这是一个 arukas 专用的酸酸奶镜像。
+这是一个 arukas 专用的酸酸乳镜像。
 
 镜像部署成功后每次启动都会向设定的邮箱发送一封邮件。
 
@@ -25,15 +25,14 @@ Use ENV:		必选
 			MAIL_USER   = example@163.com   (用户名)
 			MAIL_PASSWD = xxxxxx            (密码)
 			MAIL_TO     = example@163.com   (发到哪)
-			SSR_PASSWD  = xxxxxxxxxx        (ssr密码) 
-			SSH_PASSWD  = xxxxxxxxxx        (root密码)
+			ROOT_PASSWD  = xxxxxxxxxx       (root密码)
 Command:		留空
 ```
 
 ## 备注
 token 和 secret 获取地址: <https://app.arukas.io/settings/api-keys>
 
-镜像运行成功后在 MAIL_TO 指定的邮箱会收到新邮:
+镜像运行成功后在 MAIL_TO 指定的邮箱会收到新邮件:
 ```
 标题: [arukas.io] suansuanru updated. 2018-xx-xx xx:xx:xx
 内容: xxx.xxx.xxx.xxx:xxxx      (ssh)

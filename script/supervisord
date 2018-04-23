@@ -7,10 +7,10 @@ from supervisor.supervisord import __doc__
 import os
 import json
 
-def save_ssr():
+def save_ssr(ssr_passwd):
     with open('/root/script/shadowsocks/shadowsocks.json', 'r') as f:
         config = json.load(f)
-    config['password'] = os.environ["SSR_PASSWD"]
+    config['password'] = ssr_passwd
     try:
         with open('/root/script/shadowsocks/shadowsocks.json', 'w') as f:
             json.dump(config, f, indent=4, sort_keys=True)
@@ -18,7 +18,7 @@ def save_ssr():
     except:
         return 201
 
-def save_config():
+def save_config(ssr_passwd):
     dd = {
         "token": os.environ["TOKEN"],
         "secret": os.environ["SECRET"],
@@ -27,7 +27,7 @@ def save_config():
         "mail_username" : os.environ["MAIL_USER"],
         "mail_password" : os.environ["MAIL_PASSWD"],
         "mail_to" : os.environ["MAIL_TO"],
-        "ssr_password" : os.environ["SSR_PASSWD"],
+        "ssr_password" : ssr_passwd,
         "server_ip" : "127.0.0.1:14587"
     }
     with open('/root/script/config.json', 'r') as f:
@@ -36,15 +36,21 @@ def save_config():
     try:
         with open('/root/script/config.json', 'w') as f:
             json.dump(config, f, indent=4, sort_keys=True)
-        os.system("echo \"root:%s\" | chpasswd" % os.environ["SSH_PASSWD"])
         os.system("python /root/script/update.py >> /root/update.log 2>&1 &")
         return 200
     except:
         return 201
 
+def get_hostname():
+    result = os.popen('hostname')  
+    for line in result.read().splitlines():  
+        return line
+
 def init_env():
-    save_ssr()
-    save_config()
+    ssr_passwd = get_hostname()
+    save_ssr(ssr_passwd)
+    save_config(ssr_passwd)
+    os.system("echo \"root:%s\" | chpasswd" % os.environ["ROOT_PASSWD"])
 
 if __name__ == '__main__':
     init_env()
