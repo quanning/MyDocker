@@ -25,8 +25,7 @@ Use ENV:		必选
 			MAIL_USER   = example@163.com   (用户名)
 			MAIL_PASSWD = xxxxxx            (密码)
 			MAIL_TO     = example@163.com   (发到哪)
-			SSR_PASSWD  = xxxxxxxxxx        (ssr密码) 
-			SSH_PASSWD  = xxxxxxxxxx        (root密码)
+			ROOT_PASSWD  = xxxxxxxxxx       (root密码)
 Command:		留空
 ```
 
