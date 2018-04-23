@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import urllib
 import urllib2
-import cookielib
 import re
 import json
 import base64
@@ -13,7 +12,7 @@ import smtplib
 from email.MIMEText import MIMEText  
 from email.Utils import formatdate  
 from email.Header import Header  
-from email.mime.multipart import MIMEMultipart
+#from email.mime.multipart import MIMEMultipart
 
 default_encoding = 'utf-8'
 
