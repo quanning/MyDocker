@@ -15,6 +15,7 @@ RUN (localedef -v -c -i en_US -f UTF-8 en_US.UTF-8;\
     cp /root/script/supervisord.conf /etc/supervisord.conf;\
 
     chmod +x /root/script/supervisord;\
+    chmod +x /root/script/net-speeder-master/net_speeder;\
     cp /root/script/supervisord /usr/bin/supervisord;\
 
     cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
