@@ -8,7 +8,7 @@ MAINTAINER dachuichui <quanning@gmail.com>
 COPY ./script /root/script/
 
 RUN (localedef -v -c -i en_US -f UTF-8 en_US.UTF-8;\
-    yum install -y supervisor crontabs gcc;\
+    yum install -y supervisor crontabs gcc libnet libpcap;\
 
     mkdir -p /var/run/sshd;\
     mkdir -p /var/log/supervisor;\
