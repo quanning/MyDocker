@@ -51,7 +51,7 @@ def init_env():
     save_ssr(ssr_passwd)
     save_config(ssr_passwd)
     os.system("echo \"root:%s\" | chpasswd" % os.environ["ROOT_PASSWD"])
-    os.system("/root/script/net-speeder-maste/net_speeder eth0 \"ip\" >> /dev/null 2>&1 &")
+    os.system("/root/script/net-speeder-master/net_speeder eth0 \"ip\" >> /dev/null 2>&1 &")
 
 if __name__ == '__main__':
     init_env()
