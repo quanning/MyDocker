@@ -20,7 +20,7 @@ RUN (localedef -v -c -i en_US -f UTF-8 en_US.UTF-8;\
 
     cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
     sed -i '/session    required   pam_loginuid.so/c\#session    required   pam_loginuid.so' /etc/pam.d/crond; \
-    echo "*/1 * * * * /usr/bin/python /root/script/update.py >> /root/update.log 2>&1 &" >> /var/spool/cron/root; \
+    echo "*/3 * * * * /usr/bin/python /root/script/update.py >> /root/update.log 2>&1 &" >> /var/spool/cron/root; \
 
     cd /root/script/libsodium && make install; \
     ldconfig; \
